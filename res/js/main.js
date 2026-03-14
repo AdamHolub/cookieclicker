@@ -1,43 +1,61 @@
 const info = document.getElementById("info");
 const cookie = document.getElementById("cookie");
 const counter = document.getElementById("counter");
+
 const cookieClickMultiplier = document.getElementById("cookieClickMultiplier");
-const cookieClickMultiplier2 = document.getElementById("cookieClickMultiplier2");
 const autoClickerButton = document.getElementById("autoClickerButton");
 
 let numberOfCookies = 0;
 let cookieIncrease = 1;
 
+let multiplierPrice = 50;
+let multiplierOwned = 0;
+
 let autoClickerPrice = 100;
-let autoClickerIncrease = 0;
+let autoClickerOwned = 0;
+
+function updateCounter(){
+    counter.textContent = numberOfCookies;
+}
+
+function showInfo(text){
+    info.style.display = "block";
+    info.textContent = text;
+}
 
 cookie.onclick = () => {
     numberOfCookies += cookieIncrease;
-    counter.innerHTML = numberOfCookies;
+    updateCounter();
 }
 
 cookieClickMultiplier.onclick = () => {
-    if (numberOfCookies >= 50) {
-        numberOfCookies -= 50; // numberOfCookies = numberOfCookies - 50;
+    if(numberOfCookies >= multiplierPrice){
+        numberOfCookies -= multiplierPrice;
+        multiplierOwned++;
         cookieIncrease++;
-        counter.innerHTML = numberOfCookies;
-        let t = cookieIncrease - 1;
-        info.innerHTML = `You bought a new upgrade with turbo ${t}x`;
+        multiplierPrice = Math.floor(multiplierPrice * 1.5);
+        cookieClickMultiplier.textContent =
+        `Klikání x${cookieIncrease} | Cena: ${multiplierPrice}`;
+        updateCounter();
+        showInfo(`Upgrade koupen! Máš ${multiplierOwned}x klikací upgrade.`);
     }
 }
 
 autoClickerButton.onclick = () => {
-    if (numberOfCookies >= autoClickerPrice) {
+    if(numberOfCookies >= autoClickerPrice){
         numberOfCookies -= autoClickerPrice;
-        counter.innerHTML = numberOfCookies;
-        autoClickerPrice *= 2;
-        autoClickerButton.innerHTML = `Buy Auto Clicker: ${autoClickerPrice}`;
-        if (autoClickerIncrease == 0) {
-            setInterval(() => {
-                numberOfCookies += autoClickerIncrease;
-                counter.innerHTML = numberOfCookies;
-            }, 1000);
-        }
-        autoClickerIncrease++;
+        autoClickerOwned++;
+        autoClickerPrice = Math.floor(autoClickerPrice * 1.7);
+        autoClickerButton.textContent =
+        `AutoClicker (${autoClickerOwned}) | Cena: ${autoClickerPrice}`;
+        updateCounter();
+        showInfo(`AutoClicker zakoupen! Máš ${autoClickerOwned}.`);
     }
 }
+
+setInterval(()=>{
+    if(autoClickerOwned > 0){
+        numberOfCookies += autoClickerOwned;
+        updateCounter();
+    }
+},1000);
